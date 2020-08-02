@@ -39,34 +39,47 @@ def pick_unit(models, points_limit, army_list, detachment=None, unit_type=None, 
         print(f" * Pickup a {unit_type.name} unit of at most {points_limit} points.")
 
     choices = []
-    for entry in models:
-        unit_data = get_unit_data(codex, entry["name"])
-        #print(unit_data)
-        #print(entry)
+    for model in models:
+        unit_data = get_unit_data(codex, model["name"])
+        #print(f" * Model data: {model}")
+        #print(f" * Codex data: {unit_data}")
 
         # If the minimum unit size costs <= points_limit
         if unit_data["ppm"] * unit_data["min"] <= points_limit:
 
-            # If the unit type wasn't specified or if it matches the one specified
-            if unit_type is None or unit_data["cat"].name == unit_type.name:
+            # If the available quantity is >= minimum unit size
+            if model["qty"] >= unit_data["min"]:
 
-                # If the available quantity is >= minimum unit size
-                if entry["qty"] >= unit_data["min"]:
+                # If the unit type wasn't specified or if it matches the one specified
+                if unit_type is None or unit_data["cat"].name == unit_type.name:
 
                     # Retrieve current unit type limits if it wasn't provided
                     if unit_type is None and detachment is not None:
                         for key in detachment.__members__:
                             if key == unit_data["cat"].name:
-                                unit_type = detachment[key]
-                                #print(f"{key} == {unit_data['cat'].name}")
+                                model_type = detachment[key]
+                                #print(f"   - {model} is type {model_type}")
                                 break
                             #else:
                                 #print(f"{key} != {unit_data['cat'].name}")
+                    else:
+                        model_type = unit_type
 
                     # If the unit type is not already maxed
-                    unit_min, unit_count, unit_max = check_unit_type(army_list, unit_type)
+                    unit_min, unit_count, unit_max = check_unit_type(army_list, model_type)
                     if unit_count < unit_max:
-                        choices.append(entry)
+                        choices.append(model)
+                        #print(f"   - Adding {model} to the choices.")
+
+                else:
+                    print(f"   - Skipping {model}, wrong unit type.")
+                    pass
+            else:
+                print(f"   - Skipping {model}, not enough model for MSU.")
+                pass
+        else:
+            print(f"   - Skipping {model}, too expensive.")
+            pass
 
     if not len(choices):
         print(" * There is no valid choice remaining.")
@@ -97,8 +110,8 @@ def substract_unit(models, unit):
     :type unit: [type]
     """
     #print(f"Removing {unit} from {models}")
-    for i, entry in enumerate(models):
-        if entry["name"] == unit["name"]:
+    for i, model in enumerate(models):
+        if model["name"] == unit["name"]:
             models[i]["qty"] -= unit["qty"]
             if models[i]["qty"] < 1:
                 models.pop(i)
@@ -147,11 +160,11 @@ def check_smallest_unit(models, codex, army_list, unit_type):
     :rtype: [type]
     """
     smallest = (inf, None)
-    for entry in models:
-        unit_data = get_unit_data(codex, entry["name"])
+    for model in models:
+        unit_data = get_unit_data(codex, model["name"])
 
         # Skip if there are not enough remaining models to build a unit
-        if unit_data["min"] > entry["qty"]:
+        if unit_data["min"] > model["qty"]:
             continue
 
         # Skip if the unit type is already maxed
@@ -161,7 +174,7 @@ def check_smallest_unit(models, codex, army_list, unit_type):
 
         entry_size = unit_data["min"] * unit_data["ppm"]
         if entry_size < smallest[0]:
-            smallest = (entry_size, entry["name"])
+            smallest = (entry_size, model["name"])
 
     return smallest
 
@@ -245,5 +258,8 @@ while True:
     if new_entry is not None:
         army_list.append(new_entry)
         print(f" * Adding {new_entry['qty']} {new_entry['name']} to the army list.")
+
+    else:
+        break
 
 print_army_list(army_list)
