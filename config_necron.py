@@ -1,4 +1,5 @@
 from composition import Detachments
+from codex import Factions
 
 default = {
     "name": None,
@@ -13,10 +14,11 @@ models = []
 #model["qty"] =
 #models.append(model)
 
-faction = "necron"
+faction = Factions.Necron
 army_size = 500
 margin = 0
 detachment = Detachments.Patrol
+msu = False
 
 # HQ
 

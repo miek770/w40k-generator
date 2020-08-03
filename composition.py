@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class Unit(Enum):
     HQ = 0
     Troop = 1
@@ -11,6 +12,7 @@ class Unit(Enum):
     Lord_of_war = 7
     Fortification = 8
 
+
 class Patrol_Composition(Enum):
     HQ = (1, 2)
     Troop = (1, 3)
@@ -18,6 +20,7 @@ class Patrol_Composition(Enum):
     Fast_Attack = (0, 2)
     Heavy_Support  = (0, 2)
     Flyer = (0, 2)
+
 
 class Detachments(Enum):
     Patrol = Patrol_Composition
