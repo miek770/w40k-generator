@@ -1,5 +1,4 @@
-from composition import Detachments
-from codex import Factions
+from codex import Detachments, Factions
 
 default = {
     "name": None,
@@ -15,7 +14,7 @@ models = []
 #models.append(model)
 
 faction = Factions.Necron
-army_size = 500
+army_size = 2000
 margin = 0
 detachment = Detachments.Patrol
 msu = False

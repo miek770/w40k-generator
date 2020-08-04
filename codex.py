@@ -5,6 +5,21 @@ import codex_necron
 class Factions(Enum):
     Necron = 0
 
+Patrol_Composition = {
+    "HQ": (1, 2),
+    "Troop": (1, 3),
+    "Elite": (0, 2),
+    "Fast_Attack": (0, 2),
+    "Heavy_Support": (0, 2),
+    "Flyer": (0, 2),
+    "Dedicated_Transport": (0, 3),  # Not really, but hard to code (dirty hack)
+    "Lord_of_War": (0, 0),
+    "Fortification": (0, 0),
+}
+
+class Detachments(Enum):
+    Patrol = Patrol_Composition
+
 class Codex:
 
 
@@ -14,6 +29,11 @@ class Codex:
         # Add other factions here
         if faction == Factions.Necron:
             self.units = codex_necron.codex
+
+
+    def unit_type(self, unit_name):
+        data = self.data(unit_name)
+        return data["cat"].name
 
 
     def data(self, unit_name):

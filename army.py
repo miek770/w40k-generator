@@ -1,34 +1,29 @@
-from composition import *
 from numpy import inf
-from codex import Codex, Factions
+from codex import *
 import config_necron
 
 
 class Army:
-
 
     def __init__(self, faction):
         self.list = []
         self.faction = faction
         self.codex = Codex(faction)
 
+        # !!!!!!!!!!!!!!!!!!!!!!!
         # Add other factions here
+        # !!!!!!!!!!!!!!!!!!!!!!!
         if self.faction == Factions.Necron:
             self.detachment = config_necron.detachment
             self.max_size = config_necron.army_size
             self.margin = config_necron.margin
             self.msu = config_necron.msu
 
+        # !!!!!!!!!!!!!!!!!!!!!!!!!!
         # Add other detachment types
+        # !!!!!!!!!!!!!!!!!!!!!!!!!!
         if self.detachment == Detachments.Patrol:
-            self.limits = {
-                "HQ": Patrol_Composition.HQ,
-                "Troop": Patrol_Composition.Troop,
-                "Elite": Patrol_Composition.Elite,
-                "Fast_Attack": Patrol_Composition.Fast_Attack,
-                "Heavy_Support": Patrol_Composition.Heavy_Support,
-                "Flyer": Patrol_Composition.Flyer,
-            }
+            self.limits = Patrol_Composition
 
 
     @property
@@ -53,7 +48,7 @@ class Army:
             return False
 
 
-    def count(self, unit_type):
+    def count(self, unit_type_name):
         """Counts the number of units of a type in the army list.
 
         :param army_list: [description]
@@ -63,41 +58,38 @@ class Army:
         :return: [description]
         :rtype: [type]
         """
-        if unit_type.__class__ not in (Patrol_Composition, ):
-            raise TypeError(f"[Error] Invalid unit type: {unit_type}.")
-
         count = 0
         for entry in self.list:
             unit_data = self.codex.data(entry["name"])
-            if unit_data["cat"].name == unit_type.name:
+            if unit_data["cat"].name == unit_type_name:
                 count += 1
         return count
 
 
-    def check(self, unit_type):
-        if unit_type.__class__ in (Patrol_Composition, ):
-            unit_type_composition = unit_type
-        elif unit_type.__class__ == Unit:
-            try:
-                unit_type_composition = self.limits[unit_type.name]
-            except KeyError:
-                # This is a dirty hack, but basically any unit not defined in
-                # the detachment's limits is considered as having no limit,
-                # the reason being that their limits are more complex
-                # (ex.: dedicated transports for certain troop types).
-                return 0, 0, inf
-        else:
-            raise TypeError(f"[Error] Invalid unit type: {unit_type}.")
-
-        unit_count = self.count(unit_type_composition)
-        unit_min = unit_type_composition.value[0]
-        unit_max = unit_type_composition.value[1]
+    def check(self, unit_type_name):
+        unit_count = self.count(unit_type_name)
+        unit_min, unit_max = self.limits[unit_type_name]
         return unit_min, unit_count, unit_max
+
+
+    @property
+    def unit_types(self):
+        types = set()
+        for entry in self.list:
+            types.add(self.codex.unit_type(entry["name"]))
+        types = list(types)
+        types.sort()
+        return types
 
 
     def print(self):
         print()
-        for entry in self.list:
-            unit_data = self.codex.data(entry["name"])
-            print(f"{entry['qty']} {entry['name']} ({entry['qty'] * unit_data['ppm']} pts)")
+
+        for unit_type in self.unit_types:
+            print(f"{unit_type}:")
+            for entry in self.list:
+                entry_type = self.codex.unit_type(entry["name"])
+                if entry_type == unit_type:
+                    unit_data = self.codex.data(entry["name"])
+                    print(f" - {entry['qty']} {entry['name']} ({entry['qty'] * unit_data['ppm']} pts)")
         print(f"\nTotal: {self.size}")

@@ -1,6 +1,7 @@
 import config_necron
-from codex import Codex, Factions
-from composition import *
+from army import Army
+from codex import *
+from unit import Unit
 from numpy import inf
 from numpy.random import choice, randint, random
 
@@ -15,19 +16,54 @@ class Collection:
             self.models = config_necron.models
 
 
-    def pick(self, army, unit_type=None):
-        """Pick a random unit of the specified type.
+    def pick_type(self, army):
+        """Pick a random valid unit type.
         """
-
-        if unit_type is not None and unit_type.__class__ not in (Patrol_Composition, ):
-            raise TypeError(f"[Error] Invalid unit type: {unit_type}.")
+        if army.__class__ is not Army:
+            raise TypeError(f"[Error] Invalid army: {army}.")
 
         points_limit = army.max_size - (army.size + army.margin)
+        print(f" * Choosing a unit type with at least 1 available unit of at most {points_limit} points...")
 
-        if unit_type is None:
-            print(f" * Choosing a unit of at most {points_limit} points...")
-        else:
-            print(f" * Choosing a {unit_type.name} unit of at most {points_limit} points...")
+        choices = set()
+        for model in self.models:
+            print(f"   - Checking {model['name']}...")
+            unit_data = self.codex.data(model["name"])
+            limits = None
+
+            # If the minimum unit size costs <= points_limit
+            if unit_data["ppm"] * unit_data["min"] <= points_limit:
+
+                # If the available quantity is >= minimum unit size
+                if model["qty"] >= unit_data["min"]:
+
+                    # If the unit type is not already maxed
+                    unit_min, unit_count, unit_max = army.check(unit_data["cat"].name)
+                    if unit_count < unit_max:
+                        choices.add(unit_data["cat"])
+
+                    else:
+                        print(f"   - Skipping {unit_data['cat'].name} ({model['name']}), already maxed.")
+                        pass
+                else:
+                    print(f"   - Skipping {unit_data['cat'].name} ({model['name']}), not enough model for MSU.")
+                    pass
+            else:
+                print(f"   - Skipping {unit_data['cat'].name} ({model['name']}), too expensive.")
+                pass
+
+        if not len(choices):
+            print(" * There is no valid unit type choice remaining.")
+            return None
+
+        return choice(list(choices))
+
+
+    def pick_unit(self, army, unit_type_name):
+        """Pick a random unit of the specified type.
+        """
+        points_limit = army.max_size - (army.size + army.margin)
+        print(f" * Choosing a {unit_type_name} unit of at most {points_limit} points...")
 
         choices = []
         for model in self.models:
@@ -41,23 +77,11 @@ class Collection:
                 # If the available quantity is >= minimum unit size
                 if model["qty"] >= unit_data["min"]:
 
-                    # If the unit type wasn't specified or if it matches the one specified
-                    if unit_type is None or unit_data["cat"].name == unit_type.name:
-
-                        # Retrieve current unit type limits if it wasn't provided
-                        if unit_type is None:
-                            for key in army.limits.keys():
-                                if key == unit_data["cat"].name:
-                                    model_type = army.limits[key]
-                                    #print(f"   - {model} is type {model_type}")
-                                    break
-                                #else:
-                                    #print(f"{key} != {unit_data['cat'].name}")
-                        else:
-                            model_type = unit_type
+                    # If the unit type matches the one specified
+                    if unit_data["cat"].name == unit_type_name:
 
                         # If the unit type is not already maxed
-                        unit_min, unit_count, unit_max = army.check(model_type)
+                        unit_min, unit_count, unit_max = army.check(unit_type_name)
                         if unit_count < unit_max:
                             choices.append(model)
                             #print(f"   - Adding {model} to the choices.")
@@ -79,7 +103,7 @@ class Collection:
         new_unit = choice(choices).copy()
         unit_data = self.codex.data(new_unit["name"])
 
-        if army.msu or random() < 0.75:
+        if army.msu or random() < 0.50:
             new_unit["qty"] = unit_data["min"]
         else:
             max_size = min(
@@ -115,7 +139,7 @@ class Collection:
                 continue
 
             # Skip if the unit type is already maxed
-            unit_min, unit_count, unit_max = army.check(unit_data["cat"])
+            unit_min, unit_count, unit_max = army.check(unit_data["cat"].name)
             if unit_count >= unit_max:
                 continue
 

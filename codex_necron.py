@@ -1,4 +1,4 @@
-from composition import Unit
+from unit import Unit
 
 default = {
     "name": None,
