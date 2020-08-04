@@ -1,4 +1,5 @@
 from enum import Enum
+from numpy import inf
 import codex_necron
 
 
@@ -12,7 +13,7 @@ Patrol_Composition = {
     "Fast_Attack": (0, 2),
     "Heavy_Support": (0, 2),
     "Flyer": (0, 2),
-    "Dedicated_Transport": (0, 3),  # Not really, but hard to code (dirty hack)
+    "Dedicated_Transport": (0, inf),
     "Lord_of_War": (0, 0),
     "Fortification": (0, 0),
 }

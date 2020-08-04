@@ -26,6 +26,19 @@ class Army:
             self.limits = Patrol_Composition
 
 
+    def dedicated_transport_limit(self, transport_name):
+        max_units = 0
+        #print(f"transport_name = {transport_name}")
+        transport_data = self.codex.data(transport_name)
+        #print(f"transport_data = {transport_data}")
+        for unit_name in transport_data["units"]:
+            #print(f"unit_name = {unit_name}")
+            unit_count = self.count(unit_name=unit_name)
+            #print(f"unit_count = {unit_count}")
+            max_units += unit_count
+        return max_units
+
+
     @property
     def size(self):
         """Count the current army size in points.
@@ -48,7 +61,7 @@ class Army:
             return False
 
 
-    def count(self, unit_type_name):
+    def count(self, _=None, unit_type_name=None, unit_name=None):
         """Counts the number of units of a type in the army list.
 
         :param army_list: [description]
@@ -61,14 +74,21 @@ class Army:
         count = 0
         for entry in self.list:
             unit_data = self.codex.data(entry["name"])
-            if unit_data["cat"].name == unit_type_name:
+            if unit_type_name is not None and unit_data["cat"].name == unit_type_name:
+                count += 1
+            elif unit_name is not None and unit_data["name"] == unit_name:
                 count += 1
         return count
 
 
-    def check(self, unit_type_name):
-        unit_count = self.count(unit_type_name)
-        unit_min, unit_max = self.limits[unit_type_name]
+    def check(self, unit_type_name, model_name):
+        unit_count = self.count(unit_type_name=unit_type_name)
+        if unit_type_name == "Dedicated_Transport":
+            model_data = self.codex.data(model_name)
+            unit_min = self.limits[unit_type_name][0]
+            unit_max = self.dedicated_transport_limit(model_data["name"])
+        else:
+            unit_min, unit_max = self.limits[unit_type_name]
         return unit_min, unit_count, unit_max
 
 

@@ -282,4 +282,5 @@ model = default.copy()
 model["name"] = "Ghost Ark"
 model["ppm"] = 140
 model["cat"] = Unit.Dedicated_Transport
+model["units"] = ("Warrior", )
 codex.append(model)
