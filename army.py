@@ -26,15 +26,15 @@ class Army:
             self.limits = Patrol_Composition
 
 
-    def dedicated_transport_limit(self, transport_name):
+    def flexible_unit_limit(self, flexible_unit_name):
+        """Checks a flexible unit's upper limit based on the associatied
+        units. For example: A Ghost Ark is allowed per Warrior unit in a
+        Necron army; A unit of 2 Cryptothralls is allowed per <Cryptek> in a
+        Necron army.
+        """
         max_units = 0
-        #print(f"transport_name = {transport_name}")
-        transport_data = self.codex.data(transport_name)
-        #print(f"transport_data = {transport_data}")
-        for unit_name in transport_data["units"]:
-            #print(f"unit_name = {unit_name}")
+        for unit_name in self.codex.data(flexible_unit_name)["units"]:
             unit_count = self.count(unit_name=unit_name)
-            #print(f"unit_count = {unit_count}")
             max_units += unit_count
         return max_units
 
@@ -61,16 +61,13 @@ class Army:
             return False
 
 
-    def count(self, _=None, unit_type_name=None, unit_name=None):
-        """Counts the number of units of a type in the army list.
-
-        :param army_list: [description]
-        :type army_list: [type]
-        :param unit_type: [description]
-        :type unit_type: [type]
-        :return: [description]
-        :rtype: [type]
+    def count(self, null=None, unit_type_name=None, unit_name=None):
+        """Counts the number of units of either the specified type or with the
+        specified name in the army list.
         """
+        if null is not None or (unit_type_name is None and unit_name is None):
+            raise TypeError("A value must be assigned explicitly to either 'unit_type_name' or 'unit_name'.")
+
         count = 0
         for entry in self.list:
             unit_data = self.codex.data(entry["name"])
@@ -83,10 +80,10 @@ class Army:
 
     def check(self, unit_type_name, model_name):
         unit_count = self.count(unit_type_name=unit_type_name)
-        if unit_type_name == "Dedicated_Transport":
-            model_data = self.codex.data(model_name)
+        model_data = self.codex.data(model_name)
+        if model_data["units"] is not None:
             unit_min = self.limits[unit_type_name][0]
-            unit_max = self.dedicated_transport_limit(model_data["name"])
+            unit_max = self.flexible_unit_limit(model_data["name"])
         else:
             unit_min, unit_max = self.limits[unit_type_name]
         return unit_min, unit_count, unit_max

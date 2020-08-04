@@ -16,6 +16,7 @@ Patrol_Composition = {
     "Dedicated_Transport": (0, inf),
     "Lord_of_War": (0, 0),
     "Fortification": (0, 0),
+    "Other": (0, inf),
 }
 
 class Detachments(Enum):

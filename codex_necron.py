@@ -6,6 +6,7 @@ default = {
     "min": 1,
     "max": 1,
     "cat": Unit.HQ,
+    "units": None,
 }
 
 #model = default.copy()
@@ -107,7 +108,8 @@ model["name"] = "Cryptothrall"
 model["ppm"] = 20
 model["min"] = 2
 model["max"] = 2
-model["cat"] = Unit.Elite
+model["cat"] = Unit.Other
+model["units"] = ("Cryptek", "Plasmancer")
 codex.append(model)
 
 model = default.copy()

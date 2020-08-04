@@ -11,3 +11,4 @@ class Unit(Enum):
     Dedicated_Transport = 6
     Lord_of_War = 7
     Fortification = 8
+    Other = 9
