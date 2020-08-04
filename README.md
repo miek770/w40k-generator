@@ -7,5 +7,5 @@ This is a pet project whose purpose is to generate valid random lists per Warham
 
 ## Potential improvement
 
-* Roll unit type before rolling unit, to better represent sparse categories (ex.: Dedicated Transport);
-* Add more optional preferences, ex.: max units, prioritise painted models, identify proxies, etc.
+* Add more optional preferences (ex.: max units, prioritise painted models, identify proxies, custom percentages, etc.);
+* Handle bad configuration (ex.: wrong unit name).
