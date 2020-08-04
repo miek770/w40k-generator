@@ -14,7 +14,7 @@ models = []
 #models.append(model)
 
 faction = Factions.Necron
-army_size = 2000
+army_size = 500
 margin = 0
 detachment = Detachments.Patrol
 msu = False
