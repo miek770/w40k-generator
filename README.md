@@ -38,7 +38,7 @@ If so, then you might be interested in this library! This is a pet project whose
 
 No **PyPI** package has been developped yet, so installation must be made from source. You might want to create a virtual environment, but the steps below assume you don't:
 
-    git clone *URL*
+    git clone https://github.com/miek770/w40k-generator.git
     cd w40k-generator
     pip install -r requirements.txt
 
