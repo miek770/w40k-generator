@@ -64,6 +64,8 @@ default = {
 models = []
 ```
 
+> The `painted` option currently has no impact whatsoever.
+
 * **Army generation options**: Those define what type of army will be generated when using this faction (i.e.: this configuration file).
 
 ```
