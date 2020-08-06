@@ -1,8 +1,7 @@
 from army import Army
 from codex import *
 from unit import Unit
-from numpy import inf
-from numpy.random import choice, randint, random
+from random import choice, randint, random
 from configparser import ConfigParser
 
 
@@ -136,7 +135,7 @@ class Collection:
     def smallest_unit(self, army):
         """Find the smallest unit that can be added to the list.
         """
-        smallest = (inf, None)
+        smallest = (9e9, None)
         for model in self.models:
             unit_data = self.codex.data(model["name"])
 

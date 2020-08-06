@@ -1,5 +1,4 @@
 from enum import Enum
-from numpy import inf
 from importlib import import_module
 
 
@@ -10,10 +9,10 @@ Patrol_Composition = {
     "Fast_Attack": (0, 2),
     "Heavy_Support": (0, 2),
     "Flyer": (0, 2),
-    "Dedicated_Transport": (0, inf),
+    "Dedicated_Transport": (0, 9e9),
     "Lord_of_War": (0, 0),
     "Fortification": (0, 0),
-    "Other": (0, inf),
+    "Other": (0, 9e9),
 }
 
 
