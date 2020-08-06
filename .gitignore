@@ -4,3 +4,4 @@ build
 Lib
 Scripts
 pyvenv.cfg
+*.old
