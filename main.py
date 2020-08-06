@@ -4,10 +4,12 @@ from collection import Collection
 import click
 
 
-def main():
+@click.command()
+@click.argument("config_file", type=click.File("rb"))
+def main(config_file):
     # Change with CLI argument
-    from configs.config_necron import models, faction, army_size, margin, detachment
-    from configs.config_necron import msu
+    from config_file import models, faction, army_size, margin, detachment
+    from config_file import msu
 
     codex = Codex(faction)
     army = Army(faction)
