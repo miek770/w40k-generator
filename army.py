@@ -1,6 +1,6 @@
 from numpy import inf
 from codex import *
-import config_necron
+from configs import config_necron
 
 
 class Army:
@@ -25,7 +25,6 @@ class Army:
         if self.detachment == Detachments.Patrol:
             self.limits = Patrol_Composition
 
-
     def flexible_unit_limit(self, flexible_unit_name):
         """Checks a flexible unit's upper limit based on the associatied
         units. For example: A Ghost Ark is allowed per Warrior unit in a
@@ -37,7 +36,6 @@ class Army:
             unit_count = self.count(unit_name=unit_name)
             max_units += unit_count
         return max_units
-
 
     @property
     def size(self):
@@ -52,14 +50,12 @@ class Army:
             size += entry["qty"] * unit_data["ppm"]
         return size
 
-
     @property
     def is_full(self):
         if self.size + self.margin >= self.max_size:
             return True
         else:
             return False
-
 
     def count(self, null=None, unit_type_name=None, unit_name=None):
         """Counts the number of units of either the specified type or with the
@@ -77,7 +73,6 @@ class Army:
                 count += 1
         return count
 
-
     def check(self, unit_type_name, model_name):
         unit_count = self.count(unit_type_name=unit_type_name)
         model_data = self.codex.data(model_name)
@@ -88,7 +83,6 @@ class Army:
             unit_min, unit_max = self.limits[unit_type_name]
         return unit_min, unit_count, unit_max
 
-
     @property
     def unit_types(self):
         types = set()
@@ -97,7 +91,6 @@ class Army:
         types = list(types)
         types.sort()
         return types
-
 
     def print(self):
         print()
@@ -108,5 +101,6 @@ class Army:
                 entry_type = self.codex.unit_type(entry["name"])
                 if entry_type == unit_type:
                     unit_data = self.codex.data(entry["name"])
-                    print(f" - {entry['qty']} {entry['name']} ({entry['qty'] * unit_data['ppm']} pts)")
+                    print(f" - {entry['qty']} {entry['name']}", end="")
+                    print(f" ({entry['qty'] * unit_data['ppm']} pts)")
         print(f"\nTotal: {self.size}")

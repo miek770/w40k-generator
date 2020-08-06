@@ -1,10 +1,11 @@
 from enum import Enum
 from numpy import inf
-import codex_necron
+from codices import codex_necron
 
 
 class Factions(Enum):
     Necron = 0
+
 
 Patrol_Composition = {
     "HQ": (1, 2),
@@ -19,11 +20,12 @@ Patrol_Composition = {
     "Other": (0, inf),
 }
 
+
 class Detachments(Enum):
     Patrol = Patrol_Composition
 
-class Codex:
 
+class Codex:
 
     def __init__(self, faction):
         self.faction = faction
@@ -32,11 +34,9 @@ class Codex:
         if faction == Factions.Necron:
             self.units = codex_necron.codex
 
-
     def unit_type(self, unit_name):
         data = self.data(unit_name)
         return data["cat"].name
-
 
     def data(self, unit_name):
         """Retrieve the codex data for a given unit.
