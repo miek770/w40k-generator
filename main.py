@@ -13,8 +13,8 @@ from sys import exit
 @click.command()
 @click.argument("config_file", type=click.Path())
 @click.option("-s", "--size", "army_size", default=500, type=int)
-@click.option("-m", "--msu", default=False, type=bool)
 @click.option("-d", "--detachment", default="patrol", type=str)
+@click.option("--msu/--no-msu", default=False)
 def main(config_file, army_size, msu, detachment):
     if not exists(config_file):
         print(f"[Error] Invalid configuration file, exiting: {config_file}")
