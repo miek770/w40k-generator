@@ -4,20 +4,18 @@ from codex import *
 
 class Army:
 
-    def __init__(self, config):
+    def __init__(self, faction, army_size, msu, detachment):
         self.list = []
-        self.faction = config.faction
-        self.codex = Codex(config)
+        self.codex = Codex(faction)
 
-        self.detachment = config.detachment
-        self.max_size = config.army_size
-        self.margin = config.margin
-        self.msu = config.msu
+        self.detachment = detachment
+        self.max_size = army_size
+        self.msu = msu
 
         # !!!!!!!!!!!!!!!!!!!!!!!!!!
         # Add other detachment types
         # !!!!!!!!!!!!!!!!!!!!!!!!!!
-        if self.detachment == Detachments.Patrol:
+        if self.detachment == "patrol":
             self.limits = Patrol_Composition
 
     def flexible_unit_limit(self, flexible_unit_name):
@@ -47,7 +45,7 @@ class Army:
 
     @property
     def is_full(self):
-        if self.size + self.margin >= self.max_size:
+        if self.size >= self.max_size:
             return True
         else:
             return False

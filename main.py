@@ -1,7 +1,10 @@
-from codex import Codex
 from army import Army
 from collection import Collection
+
 import click
+from pathlib import Path
+
+from configparser import ConfigParser
 from importlib import import_module
 from os.path import exists
 from sys import exit
@@ -9,16 +12,18 @@ from sys import exit
 
 @click.command()
 @click.argument("config_file", type=click.Path())
-def main(config_file):
+@click.option("-s", "--size", "army_size", default=500, type=int)
+@click.option("-m", "--msu", default=False, type=bool)
+@click.option("-d", "--detachment", default="patrol", type=str)
+def main(config_file, army_size, msu, detachment):
     if not exists(config_file):
         print(f"[Error] Invalid configuration file, exiting: {config_file}")
         exit()
 
-    config_module = config_file.replace("/", ".").replace(".py", "").replace("\\", ".")
-    config = import_module(config_module)
+    config = ConfigParser()
+    config.read(config_file)
 
-    codex = Codex(config)
-    army = Army(config)
+    army = Army(config["General"]["faction"], army_size, msu, detachment)
     collection = Collection(config)
 
     # First ensure we meet minimum composition requirements
@@ -30,7 +35,7 @@ def main(config_file):
         # If at least of unit of this type is required
         if unit_min > 0:
             print(f"Between {unit_min} and {unit_max} {unit_type_name}", end="")
-            print(f"are required in a {army.detachment.name} detachment.")
+            print(f"are required in a {detachment} detachment.")
 
             # Add the minimum amount of units of this type
             for _ in range(unit_min):
@@ -50,7 +55,7 @@ def main(config_file):
             break
 
         # If the smallest unit is bigger than the remaining points
-        if collection.smallest_unit(army)[0] > army.max_size - (army.size + army.margin):
+        if collection.smallest_unit(army)[0] > army.max_size - army.size:
             print("The smallest remaining unit is bigger than the remaining points.")
             break
 

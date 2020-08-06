@@ -3,13 +3,20 @@ from codex import *
 from unit import Unit
 from numpy import inf
 from numpy.random import choice, randint, random
+from configparser import ConfigParser
 
 
 class Collection:
     def __init__(self, config):
-        self.faction = config.faction
-        self.codex = Codex(config)
-        self.models = config.models
+        self.codex = Codex(config["General"]["faction"])
+        self.models = []
+        for key in config:
+            if key not in ("General", "DEFAULT"):
+                self.models.append({
+                    "name": key,
+                    "qty": config[key].getint("qty"),
+                    "painted": config[key].getboolean("painted"),
+                })
 
     def pick_type(self, army):
         """Pick a random valid unit type.
@@ -17,7 +24,7 @@ class Collection:
         if army.__class__ is not Army:
             raise TypeError(f"[Error] Invalid army: {army}.")
 
-        points_limit = army.max_size - (army.size + army.margin)
+        points_limit = army.max_size - army.size
         print(f" * Choosing a unit type with at least 1 available", end="")
         print(f" unit of at most {points_limit} points...")
 
@@ -62,7 +69,7 @@ class Collection:
     def pick_unit(self, army, unit_type_name):
         """Pick a random unit of the specified type.
         """
-        points_limit = army.max_size - (army.size + army.margin)
+        points_limit = army.max_size - army.size
         print(
             f" * Choosing a {unit_type_name} unit of at most {points_limit} points..."
         )

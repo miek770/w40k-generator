@@ -1,2 +1,8 @@
 __pycache__
 configs/config_*.py
+build
+dist
+main.spec
+Lib
+Scripts
+pyvenv.cfg

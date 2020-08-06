@@ -3,10 +3,6 @@ from numpy import inf
 from importlib import import_module
 
 
-class Factions(Enum):
-    Necron = 0
-
-
 Patrol_Composition = {
     "HQ": (1, 2),
     "Troop": (1, 3),
@@ -21,17 +17,13 @@ Patrol_Composition = {
 }
 
 
-class Detachments(Enum):
-    Patrol = Patrol_Composition
-
-
 class Codex:
 
-    def __init__(self, config):
-        self.faction = config.faction
-
-        # Add other factions here
-        if self.faction == Factions.Necron:
+    def __init__(self, faction):
+        # !!!!!!!!!!!!!!!!!!
+        # Add other factions
+        # !!!!!!!!!!!!!!!!!!
+        if faction == "necron":
             i = import_module("codices.necron")
             self.units = i.codex
 

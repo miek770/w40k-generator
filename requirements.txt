@@ -1,1 +1,4 @@
 numpy
+click
+pyinstaller
+pathlib
