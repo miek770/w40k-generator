@@ -2,22 +2,24 @@ from codex import Codex
 from army import Army
 from collection import Collection
 import click
+from importlib import import_module
+from os.path import exists
+from sys import exit
 
 
 @click.command()
-@click.argument("config_file", type=click.File("rb"))
+@click.argument("config_file", type=click.Path())
 def main(config_file):
-    # Change with CLI argument
-    from config_file import models, faction, army_size, margin, detachment
-    from config_file import msu
+    if not exists(config_file):
+        print(f"[Error] Invalid configuration file, exiting: {config_file}")
+        exit()
 
-    codex = Codex(faction)
-    army = Army(faction)
-    collection = Collection(faction)
+    config_module = config_file.replace("/", ".").replace(".py", "").replace("\\", ".")
+    config = import_module(config_module)
 
-    # Debugging
-    # print(codex)
-    # print(models)
+    codex = Codex(config)
+    army = Army(config)
+    collection = Collection(config)
 
     # First ensure we meet minimum composition requirements
     # For each unit type

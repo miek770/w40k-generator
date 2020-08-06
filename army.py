@@ -1,23 +1,18 @@
 from numpy import inf
 from codex import *
-from configs import config_necron
 
 
 class Army:
 
-    def __init__(self, faction):
+    def __init__(self, config):
         self.list = []
-        self.faction = faction
-        self.codex = Codex(faction)
+        self.faction = config.faction
+        self.codex = Codex(config)
 
-        # !!!!!!!!!!!!!!!!!!!!!!!
-        # Add other factions here
-        # !!!!!!!!!!!!!!!!!!!!!!!
-        if self.faction == Factions.Necron:
-            self.detachment = config_necron.detachment
-            self.max_size = config_necron.army_size
-            self.margin = config_necron.margin
-            self.msu = config_necron.msu
+        self.detachment = config.detachment
+        self.max_size = config.army_size
+        self.margin = config.margin
+        self.msu = config.msu
 
         # !!!!!!!!!!!!!!!!!!!!!!!!!!
         # Add other detachment types

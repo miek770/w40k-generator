@@ -1,6 +1,6 @@
 from enum import Enum
 from numpy import inf
-from codices import codex_necron
+from importlib import import_module
 
 
 class Factions(Enum):
@@ -27,12 +27,13 @@ class Detachments(Enum):
 
 class Codex:
 
-    def __init__(self, faction):
-        self.faction = faction
+    def __init__(self, config):
+        self.faction = config.faction
 
         # Add other factions here
-        if faction == Factions.Necron:
-            self.units = codex_necron.codex
+        if self.faction == Factions.Necron:
+            i = import_module("codices.necron")
+            self.units = i.codex
 
     def unit_type(self, unit_name):
         data = self.data(unit_name)

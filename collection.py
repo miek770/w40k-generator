@@ -1,4 +1,3 @@
-from configs import config_necron
 from army import Army
 from codex import *
 from unit import Unit
@@ -7,11 +6,10 @@ from numpy.random import choice, randint, random
 
 
 class Collection:
-    def __init__(self, faction):
-        self.faction = faction
-        self.codex = Codex(faction)
-        if faction == Factions.Necron:
-            self.models = config_necron.models
+    def __init__(self, config):
+        self.faction = config.faction
+        self.codex = Codex(config)
+        self.models = config.models
 
     def pick_type(self, army):
         """Pick a random valid unit type.
