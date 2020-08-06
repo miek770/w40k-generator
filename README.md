@@ -31,12 +31,11 @@ If so, then you might be interested in this library! This is a pet project whose
 * Add named characters to the Necron codex;
 * Add more optional preferences (ex.: max units, prioritise painted models, custom percentages, etc.);
 * Add `proxy` and `proxied_from` options to the models configuration (and handle those options);
-* Handle bad configuration (ex.: wrong unit name);
-* Use `click` to parse arguments.
+* Handle bad configuration (ex.: wrong unit name).
 
 ## Installation
 
-No **PyPI** package has been developped yet, so installation must be made from source. You might want to create a virtual environment, but the steps below assume you don't:
+No **PyPI** package has been developped yet, so installation must be made from source. You might want to create a virtual environment but the steps below assume you don't:
 
     git clone https://github.com/miek770/w40k-generator.git
     cd w40k-generator
@@ -44,11 +43,13 @@ No **PyPI** package has been developped yet, so installation must be made from s
 
 ## Usage
 
-That will change when `click` is integrated, but for now the faction is hardcoded to the Necrons in `main.py`.
-
 ### Configuration
 
-Your personal collection for a specific faction must be configured in the `config_<faction>.py` file. For example, `config_necron.py` contains my personal collection. This file is a **Python** file structured thusly:
+Your personal collection for a specific faction must be configured in a `configs/<faction>.py` file. For example, `configs/sample_necron.py` contains my personal collection. Files starting with `config_` are ignored by **git** in the `configs` folder. Using this prefix for your configurations ensures that they won't be overwritten when you update (i.e.: pull) the repository. To create your own configuration, start by copying the sample:
+
+    cp configs/sample_necron.py configs/config_necron.py
+
+This file is a **Python** file structured thusly:
 
 * **General configuration**: Typical for any faction, could be replaced with a single import, but I find it useful to have the defaults shown on top of the file (as a reminder).
 
@@ -89,13 +90,13 @@ models.append(model)
 
 ### List generation
 
-For now (until `click` is integarted), usage is quite straightforward:
+Usage is quite straightforward:
 
-    python3 main.py
+    python3 main.py configs/config_<your_config>.py
 
-As mentioned above, the faction is currently hardcoded to the Necrons. The output should thus look something like this:
+The output should thus look something like this:
 
-    michel@galliumos ~/g/w/w40k-generator> python3 main.py
+    > python3 main.py configs/sample_necron.py
     Between 1 and 2 HQ are required in a Patrol detachment.
      * Choosing a HQ unit of at most 500 points...
      * Adding 1 Plasmancer to the army list.
@@ -133,16 +134,13 @@ Feel free to run the script a few times until you get a list that sounds good en
 
 ## Codex
 
-The units definition for a specific faction must be configured in the `codex_<faction>.py` file. Other factions can be added by creating the relevant file and integrating it in a few other places:
+The units definition for a specific faction must be configured in the `codices/<faction>.py` file. Other factions can be added by creating the relevant file and integrating it in a few other places:
 
-* `army.py`: The codex needs to be added to the imports and to the class `Army`'s initiation;
-* `codex.py`: The codex needs to be added to the imports, to the `Enum` class `Faction` and to the class `Codex`'s initiation;
-* `collection.py`: The codex needs to be added to the imports and to the class `Collection`'s initiation;
-* `main.py`: The faction-specific codex isn't actually referenced here, but the Necron faction is currently hardcoded in this file.
+* `codex.py`: The codex needs to be added to the imports, to the `Enum` class `Faction` and to the class `Codex`'s initiation.
 
-> Your personal collection must also be configured in a `config_<faction>.py` file for this codex to be used in an army list generation.
+> Your personal collection must also be configured in a `configs/config_<faction>.py` file for this codex to be used in an army list generation - see [Configuration](#configuration).
 
-For example, `codex_necron.py` contains all Necron units, except the named characters (should be added soon). This file is a **Python** file structured thusly:
+For example, `codices/necron.py` contains all Necron units, except the named characters (should be added soon). This file is a **Python** file structured thusly:
 
 * **General configuration**: Typical for any faction, could be replaced with a single import, but I find it useful to have the defaults shown on top of the file (as a reminder).
 
@@ -184,7 +182,7 @@ The detachments definition are (perhaps awkwardly) located in the `codex.py` fil
 * `codex.py`: Create the `<Detachment>_Composition` dictionary with the relevant limits (all unit types must be defined here - even those unallowed or with no limit), and add the dictionary to the `Enum` class `Detachments`;
 * `army.py`: Add the detachment to the class `Army`'s initiation.
 
-> This detachment must also be configured in a `config_<faction>.py` file to be used in an army list generation.
+> This detachment must also be configured in a `configs/config_<faction>.py` file to be used in an army list generation.
 
 ## Philosophy
 
