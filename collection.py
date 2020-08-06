@@ -47,16 +47,16 @@ class Collection:
                         choices.add(unit_data["cat"])
 
                     else:
-                        print(f"   - Skipping {unit_data['cat']}", end="")
-                        print(f" ({model['name']}), already maxed.")
+                        # print(f"   - Skipping {unit_data['cat']}", end="")
+                        # print(f" ({model['name']}), already maxed.")
                         pass
                 else:
-                    print(f"   - Skipping {unit_data['cat']}", end="")
-                    print(f" ({model['name']}), not enough model for MSU.")
+                    # print(f"   - Skipping {unit_data['cat']}", end="")
+                    # print(f" ({model['name']}), not enough model for MSU.")
                     pass
             else:
-                print(f"   - Skipping {unit_data['cat']}", end="")
-                print(f" ({model['name']}), too expensive.")
+                # print(f"   - Skipping {unit_data['cat']}", end="")
+                # print(f" ({model['name']}), too expensive.")
                 pass
 
         if not len(choices):
@@ -95,18 +95,18 @@ class Collection:
                         )
                         if unit_count < unit_max:
                             choices.append(model)
-                            print(f"   - Adding {model} to the choices.")
+                            # print(f"   - Adding {model} to the choices.")
                         else:
-                            print(f"   - Skipping {model}, the unit type is full.")
+                            # print(f"   - Skipping {model}, the unit type is full.")
                             pass
                     else:
-                        print(f"   - Skipping {model}, wrong unit type.")
+                        # print(f"   - Skipping {model}, wrong unit type.")
                         pass
                 else:
-                    print(f"   - Skipping {model}, not enough model for MSU.")
+                    # print(f"   - Skipping {model}, not enough model for MSU.")
                     pass
             else:
-                print(f"   - Skipping {model}, too expensive.")
+                # print(f"   - Skipping {model}, too expensive.")
                 pass
 
         if not len(choices):

@@ -1,27 +1,37 @@
 from army import Army
 from collection import Collection
 
-import click
+from gooey import Gooey
 
+from argparse import ArgumentParser
 from configparser import ConfigParser
 from os.path import exists
 from sys import exit
 
 
-@click.command()
-@click.argument("config_file", type=click.Path())
-@click.option("-s", "--size", "army_size", default=500, type=int)
-@click.option("-d", "--detachment", default="patrol", type=str)
-@click.option("--msu/--no-msu", default=False)
-def main(config_file, army_size, msu, detachment):
-    if not exists(config_file):
-        print(f"[Error] Invalid configuration file, exiting: {config_file}")
+@Gooey
+def main():
+    parser = ArgumentParser(description="Warhammer 40,000 army list generator")
+    parser.add_argument("config", help="Configuration file path")
+    parser.add_argument(
+        "-s", "--size", default=500, type=int, help="Army size in points"
+    )
+    parser.add_argument(
+        "-d", "--detachment", default="patrol", type=str, help="Detachment type"
+    )
+    parser.add_argument(
+        "-m", "--msu", default=False, type=bool, help="Force minimum size units"
+    )
+    args = parser.parse_args()
+
+    if not exists(args.config):
+        print(f"[Error] Invalid configuration file, exiting: {args.config}")
         exit()
 
     config = ConfigParser()
-    config.read(config_file)
+    config.read(args.config)
 
-    army = Army(config["General"]["faction"], army_size, msu, detachment)
+    army = Army(config["General"]["faction"], args.size, args.msu, args.detachment)
     collection = Collection(config)
 
     # First ensure we meet minimum composition requirements
@@ -33,7 +43,7 @@ def main(config_file, army_size, msu, detachment):
         # If at least of unit of this type is required
         if unit_min > 0:
             print(f"Between {unit_min} and {unit_max} {unit_type_name}", end="")
-            print(f" are required in a {detachment} detachment.")
+            print(f" are required in a {args.detachment} detachment.")
 
             # Add the minimum amount of units of this type
             for _ in range(unit_min):

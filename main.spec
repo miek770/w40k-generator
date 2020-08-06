@@ -11,6 +11,7 @@ a = Analysis(['main.py'],
              datas=[],
              hiddenimports=[
                  "pkg_resources.py2_warn",
+                 "PyQt5.sip",
              ],
              hookspath=[],
              runtime_hooks=[],
