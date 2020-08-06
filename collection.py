@@ -41,22 +41,22 @@ class Collection:
 
                     # If the unit type is not already maxed
                     unit_min, unit_count, unit_max = army.check(
-                        unit_data["cat"].name, model["name"]
+                        unit_data["cat"], model["name"]
                     )
                     if unit_count < unit_max:
                         choices.add(unit_data["cat"])
 
                     else:
-                        # print(f"   - Skipping {unit_data['cat'].name}", end="")
-                        # print(f" ({model['name']}), already maxed.")
+                        print(f"   - Skipping {unit_data['cat']}", end="")
+                        print(f" ({model['name']}), already maxed.")
                         pass
                 else:
-                    # print(f"   - Skipping {unit_data['cat'].name}", end="")
-                    # print(f" ({model['name']}), not enough model for MSU.")
+                    print(f"   - Skipping {unit_data['cat']}", end="")
+                    print(f" ({model['name']}), not enough model for MSU.")
                     pass
             else:
-                # print(f"   - Skipping {unit_data['cat'].name}", end="")
-                # print(f" ({model['name']}), too expensive.")
+                print(f"   - Skipping {unit_data['cat']}", end="")
+                print(f" ({model['name']}), too expensive.")
                 pass
 
         if not len(choices):
@@ -78,6 +78,7 @@ class Collection:
             unit_data = self.codex.data(model["name"])
             # print(f" * Model data: {model}")
             # print(f" * Codex data: {unit_data}")
+            # print(f" * Unit type name: {unit_type_name}")
 
             # If the minimum unit size costs <= points_limit
             if unit_data["ppm"] * unit_data["min"] <= points_limit:
@@ -86,7 +87,7 @@ class Collection:
                 if model["qty"] >= unit_data["min"]:
 
                     # If the unit type matches the one specified
-                    if unit_data["cat"].name == unit_type_name:
+                    if unit_data["cat"] == unit_type_name:
 
                         # If the unit type is not already maxed
                         unit_min, unit_count, unit_max = army.check(
@@ -94,16 +95,18 @@ class Collection:
                         )
                         if unit_count < unit_max:
                             choices.append(model)
-                            # print(f"   - Adding {model} to the choices.")
-
+                            print(f"   - Adding {model} to the choices.")
+                        else:
+                            print(f"   - Skipping {model}, the unit type is full.")
+                            pass
                     else:
-                        # print(f"   - Skipping {model}, wrong unit type.")
+                        print(f"   - Skipping {model}, wrong unit type.")
                         pass
                 else:
-                    # print(f"   - Skipping {model}, not enough model for MSU.")
+                    print(f"   - Skipping {model}, not enough model for MSU.")
                     pass
             else:
-                # print(f"   - Skipping {model}, too expensive.")
+                print(f"   - Skipping {model}, too expensive.")
                 pass
 
         if not len(choices):
@@ -117,7 +120,7 @@ class Collection:
             new_unit["qty"] = unit_data["min"]
         else:
             max_size = min(unit_data["max"], int(points_limit / unit_data["ppm"]),)
-            new_unit["qty"] = randint(unit_data["min"], max_size + 1)
+            new_unit["qty"] = randint(unit_data["min"], max_size)
 
         self.remove(new_unit)
         return new_unit
@@ -145,7 +148,7 @@ class Collection:
 
             # Skip if the unit type is already maxed
             unit_min, unit_count, unit_max = army.check(
-                unit_data["cat"].name, model["name"]
+                unit_data["cat"], model["name"]
             )
             if unit_count >= unit_max:
                 continue

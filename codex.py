@@ -1,5 +1,6 @@
 from enum import Enum
-from importlib import import_module
+from configparser import ConfigParser
+from pathlib import Path
 
 
 Patrol_Composition = {
@@ -19,26 +20,26 @@ Patrol_Composition = {
 class Codex:
 
     def __init__(self, faction):
-        # !!!!!!!!!!!!!!!!!!
-        # Add other factions
-        # !!!!!!!!!!!!!!!!!!
-        if faction == "necron":
-            i = import_module("codices.necron")
-            self.units = i.codex
+        config = ConfigParser()
+        config.read(Path("codices", f"{faction}.cfg"))
+        self.units = []
+        for key in config:
+            if key not in ("General", "DEFAULT"):
+                self.units.append({
+                    "name": key,
+                    "ppm": config[key].getint("ppm"),
+                    "min": config[key].getint("min"),
+                    "max": config[key].getint("max"),
+                    "cat": config[key]["cat"],
+                    "units": config[key]["units"],
+                })
 
     def unit_type(self, unit_name):
         data = self.data(unit_name)
-        return data["cat"].name
+        return data["cat"]
 
     def data(self, unit_name):
         """Retrieve the codex data for a given unit.
-
-        :param codex: Whole codex for a chosen faction.
-        :type codex: List of dictionaries.
-        :param name: Unit name.
-        :type name: String.
-        :return: Unit codex entry.
-        :rtype: Dictionary.
         """
         for unit in self.units:
             if unit["name"] == unit_name:

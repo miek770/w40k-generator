@@ -2,10 +2,8 @@ from army import Army
 from collection import Collection
 
 import click
-from pathlib import Path
 
 from configparser import ConfigParser
-from importlib import import_module
 from os.path import exists
 from sys import exit
 
@@ -35,7 +33,7 @@ def main(config_file, army_size, msu, detachment):
         # If at least of unit of this type is required
         if unit_min > 0:
             print(f"Between {unit_min} and {unit_max} {unit_type_name}", end="")
-            print(f"are required in a {detachment} detachment.")
+            print(f" are required in a {detachment} detachment.")
 
             # Add the minimum amount of units of this type
             for _ in range(unit_min):
@@ -64,7 +62,7 @@ def main(config_file, army_size, msu, detachment):
             print("This is no valid unit type remaining.")
             break
 
-        new_entry = collection.pick_unit(army, unit_type.name)
+        new_entry = collection.pick_unit(army, unit_type)
         if new_entry is not None:
             army.list.append(new_entry)
             print(f" * Adding {new_entry['qty']} {new_entry['name']} to the army list.")

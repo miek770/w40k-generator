@@ -59,7 +59,7 @@ class Army:
         count = 0
         for entry in self.list:
             unit_data = self.codex.data(entry["name"])
-            if unit_type_name is not None and unit_data["cat"].name == unit_type_name:
+            if unit_type_name is not None and unit_data["cat"] == unit_type_name:
                 count += 1
             elif unit_name is not None and unit_data["name"] == unit_name:
                 count += 1
@@ -68,7 +68,7 @@ class Army:
     def check(self, unit_type_name, model_name):
         unit_count = self.count(unit_type_name=unit_type_name)
         model_data = self.codex.data(model_name)
-        if model_data["units"] is not None:
+        if model_data["units"] != "None":
             unit_min = self.limits[unit_type_name][0]
             unit_max = self.flexible_unit_limit(model_data["name"])
         else:
