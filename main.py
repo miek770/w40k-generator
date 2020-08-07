@@ -1,5 +1,6 @@
 from army import Army
 from collection import Collection
+from enums import Verbose
 
 from gooey import Gooey, GooeyParser
 
@@ -14,29 +15,27 @@ __description__ = "Warhammer 40,000 Army List Generator - 9th Edition"
 __version__ = "0.1.0"
 
 
-class Verbose(Enum):
-    Error = 0
-    Info = 1
-    Debug = 2
-
-
 @Gooey(
     program_name=__title__,
+    default_size=(500, 600),
     menu=[
-        {"name": "Help", "items": [
-            {
-                "type": "AboutDialog",
-                "menuTitle": "About",
-                "name": __title__,
-                "description": __description__,
-                "version": __version__,
-                "copyright": "2020",
-                "website": "https://github.com/miek770/w40k-generator",
-                "developer": "Michel Lavoie",
-                "license": "MIT",
+        {
+            "name": "Help",
+            "items": [
+                {
+                    "type": "AboutDialog",
+                    "menuTitle": "About",
+                    "name": __title__,
+                    "description": __description__,
+                    "version": __version__,
+                    "copyright": "2020",
+                    "website": "https://github.com/miek770/w40k-generator",
+                    "developer": "Michel Lavoie",
+                    "license": "MIT",
                 },
-            ]},
-    ]
+            ],
+        },
+    ],
 )
 def main():
     parser = GooeyParser(description=__description__)
@@ -45,15 +44,23 @@ def main():
         "-s", "--size", default=500, type=int, help="Army size in points"
     )
     parser.add_argument(
-        "-d", "--detachment", default="patrol", type=str, help="Detachment type",
-        choices=["patrol", ]
+        "-d",
+        "--detachment",
+        default="patrol",
+        type=str,
+        help="Detachment type",
+        choices=["patrol",],
     )
     parser.add_argument(
         "-m", "--msu", action="store_true", help="Force minimum size units"
     )
     parser.add_argument(
-        "-v", "--verbose", action="store", type=int, default=Verbose.Error.value,
-        choices=[Verbose.Error.value, Verbose.Info.value, Verbose.Debug],
+        "-v",
+        "--verbose",
+        action="store",
+        type=int,
+        default=Verbose.Error.value,
+        choices=[Verbose.Error.value, Verbose.Info.value, Verbose.Debug.value],
         help="Print more information during execution (0 = Errors only, 1 = Info, 2 = Debug",
     )
     args = parser.parse_args()
@@ -65,7 +72,7 @@ def main():
     config = ConfigParser()
     config.read(args.config)
 
-    army = Army(config["General"]["faction"], args.size, args.msu, args.detachment)
+    army = Army(config["General"]["faction"], args.size, args.msu, args.detachment, args.verbose)
     collection = Collection(config, args.verbose)
 
     # First ensure we meet minimum composition requirements
@@ -86,7 +93,9 @@ def main():
                 if new_entry is not None:
                     army.list.append(new_entry)
                     if args.verbose:
-                        print(f" * Adding {new_entry['qty']} {new_entry['name']}", end="")
+                        print(
+                            f" * Adding {new_entry['qty']} {new_entry['name']}", end=""
+                        )
                         print(f" to the army list.")
 
     # Next, fill the list
@@ -103,7 +112,9 @@ def main():
         # If the smallest unit is bigger than the remaining points
         if collection.smallest_unit(army)[0] > army.max_size - army.size:
             if args.verbose:
-                print("The smallest remaining unit is bigger than the remaining points.")
+                print(
+                    "The smallest remaining unit is bigger than the remaining points."
+                )
             break
 
         unit_type = collection.pick_type(army)
@@ -116,7 +127,9 @@ def main():
         if new_entry is not None:
             army.list.append(new_entry)
             if args.verbose:
-                print(f" * Adding {new_entry['qty']} {new_entry['name']} to the army list.")
+                print(
+                    f" * Adding {new_entry['qty']} {new_entry['name']} to the army list."
+                )
 
         else:
             if args.verbose:

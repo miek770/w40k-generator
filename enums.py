@@ -12,3 +12,9 @@ class Unit(Enum):
     Lord_of_War = 7
     Fortification = 8
     Other = 9
+
+
+class Verbose(Enum):
+    Error = 0
+    Info = 1
+    Debug = 2

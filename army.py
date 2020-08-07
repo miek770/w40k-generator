@@ -1,11 +1,13 @@
 from codex import *
+from enums import Verbose
 
 
 class Army:
 
-    def __init__(self, faction, army_size, msu, detachment):
+    def __init__(self, faction, army_size, msu, detachment, verbose):
         self.list = []
         self.codex = Codex(faction)
+        self.verbose = verbose
 
         self.detachment = detachment
         self.max_size = army_size
@@ -85,7 +87,8 @@ class Army:
         return types
 
     def print(self):
-        print()
+        if self.verbose >= Verbose.Info.value:
+            print()
 
         for unit_type in self.unit_types:
             print(f"{unit_type}:")
@@ -95,4 +98,4 @@ class Army:
                     unit_data = self.codex.data(entry["name"])
                     print(f" - {entry['qty']} {entry['name']}", end="")
                     print(f" ({entry['qty'] * unit_data['ppm']} pts)")
-        print(f"\nTotal: {self.size}")
+        print(f"\nTotal: {self.size}\n\n")

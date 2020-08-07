@@ -1,7 +1,6 @@
 from army import Army
 from codex import *
-from unit import Unit
-from main import Verbose
+from enums import Unit, Verbose
 
 from random import choice, randint, random
 from configparser import ConfigParser
