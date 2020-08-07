@@ -14,7 +14,7 @@ def main():
         "main.spec",
     ])
     for folder in ("codices", "configs"):
-        copytree(Path(folder), Path("dist", folder))
+        copytree(Path(folder), Path("dist", "main", folder))
 
 
 if __name__ == "__main__":

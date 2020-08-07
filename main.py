@@ -12,12 +12,13 @@ from enum import Enum
 
 __title__ = "W40k Generator"
 __description__ = "Warhammer 40,000 Army List Generator - 9th Edition"
-__version__ = "0.1.0"
+__version__ = "0.1-beta"
 
 
 @Gooey(
     program_name=__title__,
     default_size=(500, 600),
+    show_success_modal=False,
     menu=[
         {
             "name": "Help",
