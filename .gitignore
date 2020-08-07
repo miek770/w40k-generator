@@ -1,6 +1,7 @@
 __pycache__
 configs/config_*.py
 build
+dist
 Lib
 Scripts
 pyvenv.cfg
