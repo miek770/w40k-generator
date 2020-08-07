@@ -4,6 +4,8 @@ import PyInstaller.__main__
 
 
 def main():
+    """Build the executable using PyInstaller.
+    """
     try:
         rmtree(Path("dist"))
     except FileNotFoundError:

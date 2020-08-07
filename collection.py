@@ -1,14 +1,17 @@
 from army import Army
 from codex import *
 from unit import Unit
+from main import Verbose
+
 from random import choice, randint, random
 from configparser import ConfigParser
 
 
 class Collection:
-    def __init__(self, config):
+    def __init__(self, config, verbose):
         self.codex = Codex(config["General"]["faction"])
         self.models = []
+        self.verbose = verbose
         for key in config:
             if key not in ("General", "DEFAULT"):
                 self.models.append({
@@ -24,8 +27,9 @@ class Collection:
             raise TypeError(f"[Error] Invalid army: {army}.")
 
         points_limit = army.max_size - army.size
-        print(f" * Choosing a unit type with at least 1 available", end="")
-        print(f" unit of at most {points_limit} points...")
+        if self.verbose:
+            print(f" * Choosing a unit type with at least 1 available", end="")
+            print(f" unit of at most {points_limit} points...")
 
         choices = set()
         for model in self.models:
@@ -47,20 +51,24 @@ class Collection:
                         choices.add(unit_data["cat"])
 
                     else:
-                        # print(f"   - Skipping {unit_data['cat']}", end="")
-                        # print(f" ({model['name']}), already maxed.")
+                        if self.verbose >= Verbose.Debug.value:
+                            print(f"   - Skipping {unit_data['cat']}", end="")
+                            print(f" ({model['name']}), already maxed.")
                         pass
                 else:
-                    # print(f"   - Skipping {unit_data['cat']}", end="")
-                    # print(f" ({model['name']}), not enough model for MSU.")
+                    if self.verbose >= Verbose.Debug.value:
+                        print(f"   - Skipping {unit_data['cat']}", end="")
+                        print(f" ({model['name']}), not enough model for MSU.")
                     pass
             else:
-                # print(f"   - Skipping {unit_data['cat']}", end="")
-                # print(f" ({model['name']}), too expensive.")
+                if self.verbose >= Verbose.Debug.value:
+                    print(f"   - Skipping {unit_data['cat']}", end="")
+                    print(f" ({model['name']}), too expensive.")
                 pass
 
         if not len(choices):
-            print(" * There is no valid unit type choice remaining.")
+            if self.verbose:
+                print(" * There is no valid unit type choice remaining.")
             return None
 
         return choice(list(choices))
@@ -69,9 +77,10 @@ class Collection:
         """Pick a random unit of the specified type.
         """
         points_limit = army.max_size - army.size
-        print(
-            f" * Choosing a {unit_type_name} unit of at most {points_limit} points..."
-        )
+        if self.verbose:
+            print(
+                f" * Choosing a {unit_type_name} unit of at most {points_limit} points..."
+            )
 
         choices = []
         for model in self.models:
@@ -95,22 +104,28 @@ class Collection:
                         )
                         if unit_count < unit_max:
                             choices.append(model)
-                            # print(f"   - Adding {model} to the choices.")
+                            if self.verbose >= Verbose.Debug.value:
+                                print(f"   - Adding {model} to the choices.")
                         else:
-                            # print(f"   - Skipping {model}, the unit type is full.")
+                            if self.verbose >= Verbose.Debug.value:
+                                print(f"   - Skipping {model}, the unit type is full.")
                             pass
                     else:
-                        # print(f"   - Skipping {model}, wrong unit type.")
+                        if self.verbose >= Verbose.Debug.value:
+                            print(f"   - Skipping {model}, wrong unit type.")
                         pass
                 else:
-                    # print(f"   - Skipping {model}, not enough model for MSU.")
+                    if self.verbose >= Verbose.Debug.value:
+                        print(f"   - Skipping {model}, not enough model for MSU.")
                     pass
             else:
-                # print(f"   - Skipping {model}, too expensive.")
+                if self.verbose >= Verbose.Debug.value:
+                    print(f"   - Skipping {model}, too expensive.")
                 pass
 
         if not len(choices):
-            print(" * There is no valid choice remaining.")
+            if self.verbose:
+                print(" * There is no valid choice remaining.")
             return None
 
         new_unit = choice(choices).copy()
