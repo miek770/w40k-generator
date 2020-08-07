@@ -1,6 +1,6 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-version = "0.1.0"
+from main import __version__
 
 block_cipher = None
 
@@ -28,7 +28,7 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,
           [],
-          name=f"w40k-generator-{version}",
+          name=f"w40k-generator-{__version__}",
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,

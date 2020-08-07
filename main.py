@@ -1,26 +1,48 @@
 from army import Army
 from collection import Collection
 
-from gooey import Gooey
+from gooey import Gooey, GooeyParser
 
-from argparse import ArgumentParser
 from configparser import ConfigParser
 from os.path import exists
-from sys import exit
+from sys import exit, stdin
 
 
-@Gooey
+__title__ = "W40k Generator"
+__description__ = "Warhammer 40,000 Army List Generator - 9th Edition"
+__version__ = "0.1.0"
+
+
+@Gooey(
+    program_name=__title__,
+    menu=[
+        {"name": "Help", "items": [
+            {
+                "type": "AboutDialog",
+                "menuTitle": "About",
+                "name": __title__,
+                "description": __description__,
+                "version": __version__,
+                "copyright": "2020",
+                "website": "https://github.com/miek770/w40k-generator",
+                "developer": "Michel Lavoie",
+                "license": "MIT",
+                },
+            ]},
+    ]
+)
 def main():
-    parser = ArgumentParser(description="Warhammer 40,000 army list generator")
-    parser.add_argument("config", help="Configuration file path")
+    parser = GooeyParser(description=__description__)
+    parser.add_argument("config", help="Configuration file path", widget="FileChooser")
     parser.add_argument(
         "-s", "--size", default=500, type=int, help="Army size in points"
     )
     parser.add_argument(
-        "-d", "--detachment", default="patrol", type=str, help="Detachment type"
+        "-d", "--detachment", default="patrol", type=str, help="Detachment type",
+        choices=["patrol", ]
     )
     parser.add_argument(
-        "-m", "--msu", default=False, type=bool, help="Force minimum size units"
+        "-m", "--msu", action="store_true", help="Force minimum size units"
     )
     args = parser.parse_args()
 
