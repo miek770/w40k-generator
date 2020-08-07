@@ -4,14 +4,15 @@ from enums import Verbose
 
 class Army:
 
-    def __init__(self, faction, army_size, msu, detachment, verbose):
+    def __init__(self, faction, army_size, force_msu, no_proxy, detachment, verbose):
         self.list = []
         self.codex = Codex(faction)
         self.verbose = verbose
 
         self.detachment = detachment
         self.max_size = army_size
-        self.msu = msu
+        self.force_msu = force_msu
+        self.no_proxy = no_proxy
 
         # !!!!!!!!!!!!!!!!!!!!!!!!!!
         # Add other detachment types

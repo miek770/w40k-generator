@@ -17,6 +17,8 @@ class Collection:
                     "name": key,
                     "qty": config[key].getint("qty"),
                     "painted": config[key].getboolean("painted"),
+                    "proxy": config[key].getboolean("proxy"),
+                    "proxied_from": config[key]["proxied_from"],
                 })
 
     def pick_type(self, army):
@@ -36,34 +38,36 @@ class Collection:
             unit_data = self.codex.data(model["name"])
             limits = None
 
-            # If the minimum unit size costs <= points_limit
-            if unit_data["ppm"] * unit_data["min"] <= points_limit:
-
-                # If the available quantity is >= minimum unit size
-                if model["qty"] >= unit_data["min"]:
-
-                    # If the unit type is not already maxed
-                    unit_min, unit_count, unit_max = army.check(
-                        unit_data["cat"], model["name"]
-                    )
-                    if unit_count < unit_max:
-                        choices.add(unit_data["cat"])
-
-                    else:
-                        if self.verbose >= Verbose.Debug.value:
-                            print(f"   - Skipping {unit_data['cat']}", end="")
-                            print(f" ({model['name']}), already maxed.")
-                        pass
-                else:
-                    if self.verbose >= Verbose.Debug.value:
-                        print(f"   - Skipping {unit_data['cat']}", end="")
-                        print(f" ({model['name']}), not enough model for MSU.")
-                    pass
-            else:
+            # If the minimum unit size costs > points_limit
+            if unit_data["ppm"] * unit_data["min"] > points_limit:
                 if self.verbose >= Verbose.Debug.value:
                     print(f"   - Skipping {unit_data['cat']}", end="")
                     print(f" ({model['name']}), too expensive.")
-                pass
+                continue
+
+            # If the available quantity is < minimum unit size
+            if model["qty"] < unit_data["min"]:
+                if self.verbose >= Verbose.Debug.value:
+                    print(f"   - Skipping {unit_data['cat']}", end="")
+                    print(f" ({model['name']}), not enough model for MSU.")
+                continue
+
+            # If the unit type is already maxed
+            unit_min, unit_count, unit_max = army.check(unit_data["cat"], model["name"])
+            if unit_count >= unit_max:
+                if self.verbose >= Verbose.Debug.value:
+                    print(f"   - Skipping {unit_data['cat']}", end="")
+                    print(f" ({model['name']}), already maxed.")
+                continue
+
+            # If proxies are ignored and it is a proxy
+            if army.no_proxy and model["proxy"]:
+                if self.verbose >= Verbose.Debug.value:
+                    print(f"   - Skipping {unit_data['cat']}", end="")
+                    print(f" ({model['name']}), is a proxy.")
+                continue
+
+            choices.add(unit_data["cat"])
 
         if not len(choices):
             if self.verbose:
@@ -88,38 +92,42 @@ class Collection:
             # print(f" * Codex data: {unit_data}")
             # print(f" * Unit type name: {unit_type_name}")
 
-            # If the minimum unit size costs <= points_limit
-            if unit_data["ppm"] * unit_data["min"] <= points_limit:
-
-                # If the available quantity is >= minimum unit size
-                if model["qty"] >= unit_data["min"]:
-
-                    # If the unit type matches the one specified
-                    if unit_data["cat"] == unit_type_name:
-
-                        # If the unit type is not already maxed
-                        unit_min, unit_count, unit_max = army.check(
-                            unit_type_name, model["name"]
-                        )
-                        if unit_count < unit_max:
-                            choices.append(model)
-                            if self.verbose >= Verbose.Debug.value:
-                                print(f"   - Adding {model} to the choices.")
-                        else:
-                            if self.verbose >= Verbose.Debug.value:
-                                print(f"   - Skipping {model}, the unit type is full.")
-                            pass
-                    else:
-                        if self.verbose >= Verbose.Debug.value:
-                            print(f"   - Skipping {model}, wrong unit type.")
-                        pass
-                else:
-                    if self.verbose >= Verbose.Debug.value:
-                        print(f"   - Skipping {model}, not enough model for MSU.")
-                    pass
-            else:
+            # If the minimum unit size costs > points_limit
+            if unit_data["ppm"] * unit_data["min"] > points_limit:
                 if self.verbose >= Verbose.Debug.value:
                     print(f"   - Skipping {model}, too expensive.")
+                continue
+
+            # If the available quantity is < minimum unit size
+            if model["qty"] < unit_data["min"]:
+                if self.verbose >= Verbose.Debug.value:
+                    print(f"   - Skipping {model}, not enough model for MSU.")
+                continue
+
+            # If the unit type doesn't match the one specified
+            if unit_data["cat"] != unit_type_name:
+                if self.verbose >= Verbose.Debug.value:
+                    print(f"   - Skipping {model}, wrong unit type.")
+                continue
+
+            # If proxies are ignored and it is a proxy
+            if army.no_proxy and model["proxy"]:
+                if self.verbose >= Verbose.Debug.value:
+                    print(f"   - Skipping {unit_data['cat']}", end="")
+                    print(f" ({model['name']}), is a proxy.")
+                continue
+
+            # If the unit type is not already maxed
+            unit_min, unit_count, unit_max = army.check(
+                unit_type_name, model["name"]
+            )
+            if unit_count < unit_max:
+                choices.append(model)
+                if self.verbose >= Verbose.Debug.value:
+                    print(f"   - Adding {model} to the choices.")
+            else:
+                if self.verbose >= Verbose.Debug.value:
+                    print(f"   - Skipping {model}, the unit type is full.")
                 pass
 
         if not len(choices):
@@ -130,7 +138,7 @@ class Collection:
         new_unit = choice(choices).copy()
         unit_data = self.codex.data(new_unit["name"])
 
-        if army.msu or random() < 0.50:
+        if army.force_msu or random() < 0.50:
             new_unit["qty"] = unit_data["min"]
         else:
             max_size = min(unit_data["max"], int(points_limit / unit_data["ppm"]),)

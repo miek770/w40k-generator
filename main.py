@@ -42,10 +42,9 @@ def main():
     parser = GooeyParser(description=__description__)
     parser.add_argument("config", help="Configuration file path", widget="FileChooser")
     parser.add_argument(
-        "-s", "--size", default=500, type=int, help="Army size in points"
+        "--size", default=500, type=int, help="Army size in points"
     )
     parser.add_argument(
-        "-d",
         "--detachment",
         default="patrol",
         type=str,
@@ -53,10 +52,14 @@ def main():
         choices=["patrol",],
     )
     parser.add_argument(
-        "-m", "--msu", action="store_true", help="Force minimum size units"
+        "--force-msu", action="store_true",
+        default=False, help="Force minimum size units",
     )
     parser.add_argument(
-        "-v",
+        "--no-proxy", action="store_true",
+        default=False, help="Ignore all proxies from the collection",
+    )
+    parser.add_argument(
         "--verbose",
         action="store",
         type=int,
@@ -73,7 +76,14 @@ def main():
     config = ConfigParser()
     config.read(args.config)
 
-    army = Army(config["General"]["faction"], args.size, args.msu, args.detachment, args.verbose)
+    army = Army(
+        faction=config["General"]["faction"],
+        army_size=args.size,
+        no_proxy=args.no_proxy,
+        force_msu=args.force_msu,
+        detachment=args.detachment,
+        verbose=args.verbose,
+        )
     collection = Collection(config, args.verbose)
 
     # First ensure we meet minimum composition requirements
