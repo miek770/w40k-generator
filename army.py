@@ -1,5 +1,32 @@
-from codex import *
+from codex import Codex
 from enums import Verbose
+
+
+Battalion_Composition = {
+    "HQ": (2, 3),
+    "Troop": (3, 6),
+    "Elite": (0, 6),
+    "Fast_Attack": (0, 3),
+    "Heavy_Support": (0, 3),
+    "Flyer": (0, 2),
+    "Dedicated_Transport": (0, 9e9),
+    "Lord_of_War": (0, 0),
+    "Fortification": (0, 0),
+    "Other": (0, 9e9),
+}
+
+Patrol_Composition = {
+    "HQ": (1, 2),
+    "Troop": (1, 3),
+    "Elite": (0, 2),
+    "Fast_Attack": (0, 2),
+    "Heavy_Support": (0, 2),
+    "Flyer": (0, 2),
+    "Dedicated_Transport": (0, 9e9),
+    "Lord_of_War": (0, 0),
+    "Fortification": (0, 0),
+    "Other": (0, 9e9),
+}
 
 
 class Army:
@@ -19,6 +46,8 @@ class Army:
         # !!!!!!!!!!!!!!!!!!!!!!!!!!
         if self.detachment == "patrol":
             self.limits = Patrol_Composition
+        elif self.detachment == "battalion":
+            self.limits = Battalion_Composition
 
     def flexible_unit_limit(self, flexible_unit_name):
         """Checks a flexible unit's upper limit based on the associatied
@@ -27,8 +56,8 @@ class Army:
         Necron army.
         """
         max_units = 0
-        for unit_name in self.codex.data(flexible_unit_name)["units"]:
-            unit_count = self.count(unit_name=unit_name)
+        for unit_name in self.codex.data(flexible_unit_name)["units"].split(","):
+            unit_count = self.count(unit_name=unit_name.strip())
             max_units += unit_count
         return max_units
 

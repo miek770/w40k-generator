@@ -12,12 +12,12 @@ from enum import Enum
 
 __title__ = "W40k Generator"
 __description__ = "Warhammer 40,000 Army List Generator - 9th Edition"
-__version__ = "0.1-beta"
+__version__ = "0.1.0"
 
 
 @Gooey(
     program_name=__title__,
-    default_size=(500, 600),
+    default_size=(500, 650),
     show_success_modal=False,
     menu=[
         {
@@ -42,14 +42,14 @@ def main():
     parser = GooeyParser(description=__description__)
     parser.add_argument("config", help="Configuration file path", widget="FileChooser")
     parser.add_argument(
-        "--size", default=500, type=int, help="Army size in points"
+        "--size", default=1000, type=int, help="Army size in points"
     )
     parser.add_argument(
         "--detachment",
         default="patrol",
         type=str,
         help="Detachment type",
-        choices=["patrol",],
+        choices=["patrol", "battalion"],
     )
     parser.add_argument(
         "--force-msu", action="store_true",
