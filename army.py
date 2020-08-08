@@ -1,24 +1,53 @@
-from numpy import inf
-from codex import *
+from codex import Codex
+from enums import Verbose
+
+
+Battalion_Composition = {
+    "HQ": (2, 3),
+    "Troop": (3, 6),
+    "Elite": (0, 6),
+    "Fast_Attack": (0, 3),
+    "Heavy_Support": (0, 3),
+    "Flyer": (0, 2),
+    "Dedicated_Transport": (0, 9e9),
+    "Lord_of_War": (0, 0),
+    "Fortification": (0, 0),
+    "Other": (0, 9e9),
+}
+
+Patrol_Composition = {
+    "HQ": (1, 2),
+    "Troop": (1, 3),
+    "Elite": (0, 2),
+    "Fast_Attack": (0, 2),
+    "Heavy_Support": (0, 2),
+    "Flyer": (0, 2),
+    "Dedicated_Transport": (0, 9e9),
+    "Lord_of_War": (0, 0),
+    "Fortification": (0, 0),
+    "Other": (0, 9e9),
+}
 
 
 class Army:
 
-    def __init__(self, config):
+    def __init__(self, faction, army_size, force_msu, no_proxy, detachment, verbose):
         self.list = []
-        self.faction = config.faction
-        self.codex = Codex(config)
+        self.codex = Codex(faction)
+        self.verbose = verbose
 
-        self.detachment = config.detachment
-        self.max_size = config.army_size
-        self.margin = config.margin
-        self.msu = config.msu
+        self.detachment = detachment
+        self.max_size = army_size
+        self.force_msu = force_msu
+        self.no_proxy = no_proxy
 
         # !!!!!!!!!!!!!!!!!!!!!!!!!!
         # Add other detachment types
         # !!!!!!!!!!!!!!!!!!!!!!!!!!
-        if self.detachment == Detachments.Patrol:
+        if self.detachment == "patrol":
             self.limits = Patrol_Composition
+        elif self.detachment == "battalion":
+            self.limits = Battalion_Composition
 
     def flexible_unit_limit(self, flexible_unit_name):
         """Checks a flexible unit's upper limit based on the associatied
@@ -27,8 +56,8 @@ class Army:
         Necron army.
         """
         max_units = 0
-        for unit_name in self.codex.data(flexible_unit_name)["units"]:
-            unit_count = self.count(unit_name=unit_name)
+        for unit_name in self.codex.data(flexible_unit_name)["units"].split(","):
+            unit_count = self.count(unit_name=unit_name.strip())
             max_units += unit_count
         return max_units
 
@@ -47,7 +76,7 @@ class Army:
 
     @property
     def is_full(self):
-        if self.size + self.margin >= self.max_size:
+        if self.size >= self.max_size:
             return True
         else:
             return False
@@ -62,7 +91,7 @@ class Army:
         count = 0
         for entry in self.list:
             unit_data = self.codex.data(entry["name"])
-            if unit_type_name is not None and unit_data["cat"].name == unit_type_name:
+            if unit_type_name is not None and unit_data["cat"] == unit_type_name:
                 count += 1
             elif unit_name is not None and unit_data["name"] == unit_name:
                 count += 1
@@ -71,7 +100,7 @@ class Army:
     def check(self, unit_type_name, model_name):
         unit_count = self.count(unit_type_name=unit_type_name)
         model_data = self.codex.data(model_name)
-        if model_data["units"] is not None:
+        if model_data["units"] != "None":
             unit_min = self.limits[unit_type_name][0]
             unit_max = self.flexible_unit_limit(model_data["name"])
         else:
@@ -88,7 +117,8 @@ class Army:
         return types
 
     def print(self):
-        print()
+        if self.verbose >= Verbose.Info.value:
+            print()
 
         for unit_type in self.unit_types:
             print(f"{unit_type}:")
@@ -98,4 +128,4 @@ class Army:
                     unit_data = self.codex.data(entry["name"])
                     print(f" - {entry['qty']} {entry['name']}", end="")
                     print(f" ({entry['qty'] * unit_data['ppm']} pts)")
-        print(f"\nTotal: {self.size}")
+        print(f"\nTotal: {self.size}\n\n")
