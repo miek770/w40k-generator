@@ -40,7 +40,11 @@ __version__ = "0.1.0"
 )
 def main():
     parser = GooeyParser(description=__description__)
-    parser.add_argument("config", help="Configuration file path", widget="FileChooser")
+    parser.add_argument(
+        "config",
+        help="Configuration file path (army collection)",
+        widget="FileChooser",
+    )
     parser.add_argument(
         "--size", default=1000, type=int, help="Army size in points"
     )
@@ -67,6 +71,12 @@ def main():
         choices=[Verbose.Error.value, Verbose.Info.value, Verbose.Debug.value],
         help="Print more information during execution (0 = Errors only, 1 = Info, 2 = Debug",
     )
+    parser.add_argument(
+        "--inf",
+        action="store_true",
+        default=False,
+        help="Ignore collection content (ex.: when playing on Tabletop Simulator)",
+    )
     args = parser.parse_args()
 
     if not exists(args.config):
@@ -84,7 +94,7 @@ def main():
         detachment=args.detachment,
         verbose=args.verbose,
         )
-    collection = Collection(config, args.verbose)
+    collection = Collection(config, args.verbose, args.inf)
 
     # First ensure we meet minimum composition requirements
     # For each unit type

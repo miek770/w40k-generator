@@ -4,18 +4,22 @@ from enums import Unit, Verbose
 
 from random import choice, randint, random
 from configparser import ConfigParser
+import math
 
 
 class Collection:
-    def __init__(self, config, verbose):
+    def __init__(self, config, verbose, inf):
         self.codex = Codex(config["General"]["faction"])
         self.models = []
         self.verbose = verbose
         for key in config:
             if key not in ("General", "DEFAULT"):
+
+                qty = config[key].getint("qty") if not inf else math.inf
+
                 self.models.append({
                     "name": key,
-                    "qty": config[key].getint("qty"),
+                    "qty": qty,
                     "painted": config[key].getboolean("painted"),
                     "proxy": config[key].getboolean("proxy"),
                     "proxied_from": config[key]["proxied_from"],
