@@ -17,7 +17,7 @@ __version__ = "0.1.0"
 
 @Gooey(
     program_name=__title__,
-    default_size=(500, 650),
+    default_size=(500, 800),
     show_success_modal=False,
     menu=[
         {
@@ -77,6 +77,12 @@ def main():
         default=False,
         help="Ignore collection content (ex.: when playing on Tabletop Simulator)",
     )
+    parser.add_argument(
+        "--unique",
+        action="store_true",
+        default=False,
+        help="Consider unique (named) characters in the collection",
+    )
     args = parser.parse_args()
 
     if not exists(args.config):
@@ -94,7 +100,12 @@ def main():
         detachment=args.detachment,
         verbose=args.verbose,
         )
-    collection = Collection(config, args.verbose, args.inf)
+    collection = Collection(
+        config=config,
+        verbose=args.verbose,
+        inf=args.inf,
+        include_unique=args.unique,
+        )
 
     # First ensure we meet minimum composition requirements
     # For each unit type

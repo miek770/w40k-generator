@@ -20,6 +20,7 @@ class Codex:
                     "max": config[key].getint("max"),
                     "cat": config[key]["cat"],
                     "units": config[key]["units"],
+                    "unique": config[key].getboolean("unique")
                 })
 
     def unit_type(self, unit_name):
@@ -34,3 +35,6 @@ class Codex:
                 return unit
         print(f"[Error] {unit_name} not found in codex {self.faction}.cfg")
         exit()
+
+    def is_unique(self, unit_name):
+        return self.data(unit_name)["unique"]
