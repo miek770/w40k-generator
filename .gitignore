@@ -6,3 +6,6 @@ Lib
 Scripts
 pyvenv.cfg
 *.old
+*.zip
+W40k Generator*
+*.spec

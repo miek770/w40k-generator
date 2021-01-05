@@ -12,12 +12,12 @@ from enum import Enum
 
 __title__ = "W40k Generator"
 __description__ = "Warhammer 40,000 Army List Generator - 9th Edition"
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 
 @Gooey(
     program_name=__title__,
-    default_size=(500, 650),
+    default_size=(500, 800),
     show_success_modal=False,
     menu=[
         {
@@ -29,7 +29,7 @@ __version__ = "0.1.0"
                     "name": __title__,
                     "description": __description__,
                     "version": __version__,
-                    "copyright": "2020",
+                    "copyright": "2021",
                     "website": "https://github.com/miek770/w40k-generator",
                     "developer": "Michel Lavoie",
                     "license": "MIT",
@@ -40,7 +40,11 @@ __version__ = "0.1.0"
 )
 def main():
     parser = GooeyParser(description=__description__)
-    parser.add_argument("config", help="Configuration file path", widget="FileChooser")
+    parser.add_argument(
+        "config",
+        help="Configuration file path (army collection)",
+        widget="FileChooser",
+    )
     parser.add_argument(
         "--size", default=1000, type=int, help="Army size in points"
     )
@@ -67,6 +71,18 @@ def main():
         choices=[Verbose.Error.value, Verbose.Info.value, Verbose.Debug.value],
         help="Print more information during execution (0 = Errors only, 1 = Info, 2 = Debug",
     )
+    parser.add_argument(
+        "--inf",
+        action="store_true",
+        default=False,
+        help="Ignore collection content (ex.: when playing on Tabletop Simulator)",
+    )
+    parser.add_argument(
+        "--unique",
+        action="store_true",
+        default=False,
+        help="Consider unique (named) characters in the collection",
+    )
     args = parser.parse_args()
 
     if not exists(args.config):
@@ -84,7 +100,12 @@ def main():
         detachment=args.detachment,
         verbose=args.verbose,
         )
-    collection = Collection(config, args.verbose)
+    collection = Collection(
+        config=config,
+        verbose=args.verbose,
+        inf=args.inf,
+        include_unique=args.unique,
+        )
 
     # First ensure we meet minimum composition requirements
     # For each unit type
