@@ -1,18 +1,29 @@
+__title__ = "W40k Generator"
+__version__ = "0.2.1"
+__description__ = "Warhammer 40,000 Army List Generator - 9th Edition"
+__copyright__ = "2021"
+__website__ = "https://github.com/miek770/w40k-generator"
+__author__ = "Michel Lavoie"
+__license__ = "MIT"
+
+
+# Standard library
+from configparser import ConfigParser
+from os.path import exists
+from sys import argv, exit
+
+# Extra librairies
+from gooey import Gooey, GooeyParser
+
+# Current module
 from army import Army
 from collection import Collection
 from enums import Verbose
 
-from gooey import Gooey, GooeyParser
 
-from configparser import ConfigParser
-from os.path import exists
-from sys import exit, stdin
-from enum import Enum
-
-
-__title__ = "W40k Generator"
-__description__ = "Warhammer 40,000 Army List Generator - 9th Edition"
-__version__ = "0.2.0"
+target = None
+if "__compiled__" in globals():
+    target = argv[0]
 
 
 @Gooey(
@@ -29,14 +40,15 @@ __version__ = "0.2.0"
                     "name": __title__,
                     "description": __description__,
                     "version": __version__,
-                    "copyright": "2021",
-                    "website": "https://github.com/miek770/w40k-generator",
-                    "developer": "Michel Lavoie",
-                    "license": "MIT",
+                    "copyright": __copyright__,
+                    "website": __website__,
+                    "developer": __author__,
+                    "license": __license__,
                 },
             ],
         },
     ],
+    target=target,
 )
 def main():
     parser = GooeyParser(description=__description__)
