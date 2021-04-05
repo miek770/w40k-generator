@@ -12,7 +12,7 @@ __license__ = "MIT"
 from configparser import ConfigParser
 from os import getcwd
 from os.path import exists
-from sys import exit, stdin
+import sys
 from tkinter import Tk, messagebox
 
 # Third party library
@@ -32,7 +32,13 @@ if " " in getcwd():
         message="The path where the application is saved includes a space. Please \
 move the application folder to a path with no space and run the application again.",
     )
-    exit()
+    sys.exit()
+
+
+# Fix needed when compiling Gooey
+target = None
+if "__compiled__" in globals():
+    target = sys.argv[0]
 
 
 @Gooey(
@@ -107,7 +113,7 @@ def main():
 
     if not exists(args.config):
         print(f"[Error] Invalid configuration file, exiting: {args.config}")
-        exit()
+        sys.exit()
 
     config = ConfigParser()
     config.read(args.config)
