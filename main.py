@@ -34,20 +34,6 @@ move the application folder to a path with no space and run the application agai
     sys.exit()
 
 
-# Standard library
-from configparser import ConfigParser
-from os.path import exists
-from sys import argv, exit
-
-# Extra librairies
-from gooey import Gooey, GooeyParser
->>>>>>> master
-
-# Current module
-from army import Army
-from collection import Collection
-from enums import Verbose
-
 # Fix needed when compiling Gooey
 target = None
 if "__compiled__" in globals():
