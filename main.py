@@ -1,18 +1,38 @@
+# -*- coding: utf-8 -*-
+__version__ = "0.2.2"
+__title__ = "W40k Generator"
+__description__ = "Warhammer 40,000 Army List Generator - 9th Edition"
+__copyright__ = "2021"
+__website__ = "https://github.com/miek770/w40k-generator"
+__author__ = "Michel Lavoie"
+__license__ = "MIT"
+
+
+# Builtin library
+from configparser import ConfigParser
+from os import getcwd
+from os.path import exists
+from sys import exit, stdin
+from tkinter import Tk, messagebox
+
+# Third party library
+from gooey import Gooey, GooeyParser
+
+# Project modules
 from army import Army
 from collection import Collection
 from enums import Verbose
 
-from gooey import Gooey, GooeyParser
 
-from configparser import ConfigParser
-from os.path import exists
-from sys import exit, stdin
-from enum import Enum
-
-
-__title__ = "W40k Generator"
-__description__ = "Warhammer 40,000 Army List Generator - 9th Edition"
-__version__ = "0.2.0"
+# Check if there is a space in the current working directory
+if " " in getcwd():
+    Tk().withdraw()
+    messagebox.showerror(
+        title="Invalid path",
+        message="The path where the application is saved includes a space. Please \
+move the application folder to a path with no space and run the application again.",
+    )
+    exit()
 
 
 @Gooey(
@@ -29,10 +49,10 @@ __version__ = "0.2.0"
                     "name": __title__,
                     "description": __description__,
                     "version": __version__,
-                    "copyright": "2021",
-                    "website": "https://github.com/miek770/w40k-generator",
-                    "developer": "Michel Lavoie",
-                    "license": "MIT",
+                    "copyright": __copyright__,
+                    "website": __website__,
+                    "developer": __author__,
+                    "license": __license__,
                 },
             ],
         },
