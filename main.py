@@ -1,5 +1,5 @@
 __title__ = "W40k Generator"
-__version__ = "0.2.1"
+__version__ = "0.2.2"
 __description__ = "Warhammer 40,000 Army List Generator - 9th Edition"
 __copyright__ = "2021"
 __website__ = "https://github.com/miek770/w40k-generator"
@@ -7,23 +7,37 @@ __author__ = "Michel Lavoie"
 __license__ = "MIT"
 
 
-# Standard library
+# Builtin library
 from configparser import ConfigParser
+from os import getcwd
 from os.path import exists
-from sys import argv, exit
+import sys
+from tkinter import Tk, messagebox
 
-# Extra librairies
+# Third party library
 from gooey import Gooey, GooeyParser
 
-# Current module
+# Project modules
 from army import Army
 from collection import Collection
 from enums import Verbose
 
 
+# Check if there is a space in the current working directory
+if " " in getcwd():
+    Tk().withdraw()
+    messagebox.showerror(
+        title="Invalid path",
+        message="The path where the application is saved includes a space. Please \
+move the application folder to a path with no space and run the application again.",
+    )
+    sys.exit()
+
+
+# Fix needed when compiling Gooey
 target = None
 if "__compiled__" in globals():
-    target = argv[0]
+    target = sys.argv[0]
 
 
 @Gooey(
@@ -99,7 +113,7 @@ def main():
 
     if not exists(args.config):
         print(f"[Error] Invalid configuration file, exiting: {args.config}")
-        exit()
+        sys.exit()
 
     config = ConfigParser()
     config.read(args.config)
