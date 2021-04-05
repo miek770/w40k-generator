@@ -1,4 +1,3 @@
-from enum import Enum
 from configparser import ConfigParser
 from pathlib import Path
 from sys import exit

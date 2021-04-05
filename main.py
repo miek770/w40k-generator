@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
-__version__ = "0.2.2"
 __title__ = "W40k Generator"
+__version__ = "0.2.2"
 __description__ = "Warhammer 40,000 Army List Generator - 9th Edition"
 __copyright__ = "2021"
 __website__ = "https://github.com/miek770/w40k-generator"
@@ -35,6 +34,20 @@ move the application folder to a path with no space and run the application agai
     sys.exit()
 
 
+# Standard library
+from configparser import ConfigParser
+from os.path import exists
+from sys import argv, exit
+
+# Extra librairies
+from gooey import Gooey, GooeyParser
+>>>>>>> master
+
+# Current module
+from army import Army
+from collection import Collection
+from enums import Verbose
+
 # Fix needed when compiling Gooey
 target = None
 if "__compiled__" in globals():
@@ -63,6 +76,7 @@ if "__compiled__" in globals():
             ],
         },
     ],
+    target=target,
 )
 def main():
     parser = GooeyParser(description=__description__)
